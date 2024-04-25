@@ -74,6 +74,9 @@ class GooglePlacesAutoCompleteTextFormField extends StatefulWidget {
   final TextStyle? predictionsStyle;
   final OverlayContainer? overlayContainer;
   final String? proxyURL;
+  final BoxDecoration? predictionDecoration;
+  final Widget? predictionsDivider;
+  final Color? predictionOnPressColor;
 
   const GooglePlacesAutoCompleteTextFormField({
     super.key,
@@ -89,6 +92,9 @@ class GooglePlacesAutoCompleteTextFormField extends StatefulWidget {
     this.predictionsStyle,
     this.overlayContainer,
     this.proxyURL,
+    this.predictionDecoration,
+    this.predictionsDivider,
+    this.predictionOnPressColor,
 
     ////// DEFAULT TEXT FORM INPUTS
     this.initialValue,
@@ -311,11 +317,15 @@ class _GooglePlacesAutoCompleteTextFormFieldState
   }
 
   Widget get _overlayChild {
-    return ListView.builder(
+    return ListView.separated(
       padding: EdgeInsets.zero,
       shrinkWrap: true,
       itemCount: allPredictions.length,
+      separatorBuilder: (context, index) =>
+          widget.predictionsDivider ?? const SizedBox(),
       itemBuilder: (BuildContext context, int index) => InkWell(
+        highlightColor: widget.predictionOnPressColor,
+        splashColor: widget.predictionOnPressColor,
         onTap: () {
           if (index < allPredictions.length) {
             widget.itmClick!(allPredictions[index]);
@@ -327,6 +337,7 @@ class _GooglePlacesAutoCompleteTextFormFieldState
           }
         },
         child: Container(
+          decoration: widget.predictionDecoration,
           padding: const EdgeInsets.all(10),
           child: Text(
             allPredictions[index].description!,
