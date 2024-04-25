@@ -79,6 +79,7 @@ class GooglePlacesAutoCompleteTextFormField extends StatefulWidget {
   final Color? predictionOnPressColor;
   final Widget? predictionHeaderText;
   final EdgeInsets? predictionPadding;
+  final bool onlyFullAddress;
 
   const GooglePlacesAutoCompleteTextFormField({
     super.key,
@@ -99,6 +100,7 @@ class GooglePlacesAutoCompleteTextFormField extends StatefulWidget {
     this.predictionOnPressColor,
     this.predictionHeaderText,
     this.predictionPadding,
+    this.onlyFullAddress = false,
 
     ////// DEFAULT TEXT FORM INPUTS
     this.initialValue,
@@ -267,6 +269,11 @@ class _GooglePlacesAutoCompleteTextFormFieldState
         }
       }
     }
+
+    if (widget.onlyFullAddress) {
+      url = "$url&types=address";
+    }
+
     final response = await _dio.get(url);
 
     final subscriptionResponse =
