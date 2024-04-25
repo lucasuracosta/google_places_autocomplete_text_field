@@ -77,6 +77,8 @@ class GooglePlacesAutoCompleteTextFormField extends StatefulWidget {
   final BoxDecoration? predictionDecoration;
   final Widget? predictionsDivider;
   final Color? predictionOnPressColor;
+  final Widget? predictionHeaderText;
+  final EdgeInsets? predictionPadding;
 
   const GooglePlacesAutoCompleteTextFormField({
     super.key,
@@ -95,6 +97,8 @@ class GooglePlacesAutoCompleteTextFormField extends StatefulWidget {
     this.predictionDecoration,
     this.predictionsDivider,
     this.predictionOnPressColor,
+    this.predictionHeaderText,
+    this.predictionPadding,
 
     ////// DEFAULT TEXT FORM INPUTS
     this.initialValue,
@@ -317,34 +321,40 @@ class _GooglePlacesAutoCompleteTextFormFieldState
   }
 
   Widget get _overlayChild {
-    return ListView.separated(
-      padding: EdgeInsets.zero,
-      shrinkWrap: true,
-      itemCount: allPredictions.length,
-      separatorBuilder: (context, index) =>
-          widget.predictionsDivider ?? const SizedBox(),
-      itemBuilder: (BuildContext context, int index) => InkWell(
-        highlightColor: widget.predictionOnPressColor,
-        splashColor: widget.predictionOnPressColor,
-        onTap: () {
-          if (index < allPredictions.length) {
-            widget.itmClick!(allPredictions[index]);
-            if (!widget.isLatLngRequired) return;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (widget.predictionHeaderText != null) widget.predictionHeaderText!,
+        ListView.separated(
+          padding: EdgeInsets.zero,
+          shrinkWrap: true,
+          itemCount: allPredictions.length,
+          separatorBuilder: (context, index) =>
+              widget.predictionsDivider ?? const SizedBox(),
+          itemBuilder: (BuildContext context, int index) => InkWell(
+            highlightColor: widget.predictionOnPressColor,
+            splashColor: widget.predictionOnPressColor,
+            onTap: () {
+              if (index < allPredictions.length) {
+                widget.itmClick!(allPredictions[index]);
+                if (!widget.isLatLngRequired) return;
 
-            getPlaceDetailsFromPlaceId(allPredictions[index]);
+                getPlaceDetailsFromPlaceId(allPredictions[index]);
 
-            removeOverlay();
-          }
-        },
-        child: Container(
-          decoration: widget.predictionDecoration,
-          padding: const EdgeInsets.all(10),
-          child: Text(
-            allPredictions[index].description!,
-            style: widget.predictionsStyle ?? widget.style,
+                removeOverlay();
+              }
+            },
+            child: Container(
+              decoration: widget.predictionDecoration,
+              padding: widget.predictionPadding ?? const EdgeInsets.all(10),
+              child: Text(
+                allPredictions[index].description!,
+                style: widget.predictionsStyle ?? widget.style,
+              ),
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 
